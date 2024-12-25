@@ -11,14 +11,6 @@ def load():
     return lemmas, wordforms
 
 
-def introduce_special_cases_from_dictionary(dictionary):
-    for word in dictionary:
-        if (" " in word) or ("-" in word):
-            if len(dictionary[word]) == 1:
-                ru_nlp.tokenizer.add_special_case(word, [{"ORTH": dictionary[word][0]["accentuated"]}])
-                ru_nlp.tokenizer.add_special_case(word.capitalize(), [{"ORTH": dictionary[word][0]["accentuated"].capitalize()}])
-
-
 def compatible(interpretation, lemma, tag, lemmas):
     if lemma in lemmas:
         pos_exists = False
@@ -138,17 +130,12 @@ def accentuate(text, wordforms, lemmas):
     return res
 
 
-lemmas, wordforms = load()
-introduce_special_cases_from_dictionary(wordforms)
+def get_stressed_rows(filename):
+    lemmas, wordforms = load()
 
-f = open("in.txt", mode='r', encoding='utf-8')
-sentence = f.read()
-f.close()
+    with open(filename, encoding="utf-8") as f:
+        sentence = f.read()
 
-res = accentuate(sentence, wordforms, lemmas)
+    res = accentuate(sentence, wordforms, lemmas)
 
-f = open("out.txt", mode='w', encoding='utf-8')
-f.write(res)
-f.close()
-
-print(res)
+    return res
